@@ -18,10 +18,12 @@ app.secret_key = 'your-secret-key-change-this-2026'
 
 # === БАЗА ДАННЫХ ===
 
-DB_PATH = os.path.join(os.path.dirname(__file__), 'salary.db')
+DB_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'salary.db')
 
 def init_db():
     """Инициализация базы данных"""
+    print(f"DB path: {DB_PATH}")  
+    print(f"DB exists: {os.path.exists(DB_PATH)}")
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     
@@ -111,6 +113,11 @@ def register():
     if request.method == 'POST':
         username = request.form.get('username', '').strip()
         password = request.form.get('password', '').strip()
+       @app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form.get('username', '').strip()
+        password = request.form.get('password', '').strip()
         
         if not username or not password:
             return render_template('register.html', error='Заполните все поля')
@@ -118,8 +125,8 @@ def register():
         if len(password) < 4:
             return render_template('register.html', error='Пароль минимум 4 символа')
         
-        conn = get_db()
         try:
+            conn = get_db()
             conn.execute(
                 'INSERT INTO users (username, password_hash) VALUES (?, ?)',
                 (username, hash_password(password))
@@ -128,10 +135,13 @@ def register():
             conn.close()
             return redirect(url_for('login'))
         except sqlite3.IntegrityError:
-            conn.close()
             return render_template('register.html', error='Пользователь уже существует')
+        except Exception as e:
+            return render_template('register.html', error=f'Ошибка БД: {str(e)}')
     
     return render_template('register.html')
+        if not username or not password:
+            return render_template('register.html', erro
 
 @app.route('/logout')
 def logout():
