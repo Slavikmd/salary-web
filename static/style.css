@@ -1,0 +1,423 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f0f4f8;
+    color: #1a1a2e;
+    min-height: 100vh;
+}
+
+/* === АВТОРИЗАЦИЯ === */
+
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.auth-card {
+    background: white;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    width: 100%;
+    max-width: 400px;
+}
+
+.auth-card h1 {
+    font-size: 28px;
+    color: #1a2a4a;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    text-align: center;
+    color: #666;
+    margin-bottom: 30px;
+    font-size: 16px;
+}
+
+.auth-card form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.auth-card input {
+    padding: 14px 16px;
+    border: 2px solid #e0e6ed;
+    border-radius: 10px;
+    font-size: 16px;
+    transition: border-color 0.2s;
+}
+
+.auth-card input:focus {
+    outline: none;
+    border-color: #4a90d9;
+}
+
+.btn-primary {
+    background: #4a90d9;
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-primary:hover {
+    background: #357abd;
+}
+
+.link-text {
+    text-align: center;
+    margin-top: 20px;
+    color: #666;
+}
+
+.link-text a {
+    color: #4a90d9;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.error {
+    background: #ffe0e0;
+    color: #c0392b;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    text-align: center;
+    font-size: 14px;
+}
+
+/* === ОСНОВНОЕ ПРИЛОЖЕНИЕ === */
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.header {
+    background: #1a2a4a;
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.header h1 {
+    font-size: 22px;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.username {
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+.btn-logout {
+    background: #e74c3c;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.date-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    background: white;
+    padding: 12px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.date-nav button {
+    background: #e0e6ed;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.date-nav button:hover {
+    background: #d0d8e0;
+}
+
+.date-nav span {
+    font-size: 20px;
+    font-weight: 600;
+    min-width: 140px;
+    text-align: center;
+}
+
+.btn-today {
+    background: #4a90d9 !important;
+    color: white;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    margin-bottom: 16px;
+}
+
+.card h2 {
+    font-size: 18px;
+    color: #1a2a4a;
+    margin-bottom: 15px;
+}
+
+.btn-row {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-row button {
+    flex: 1;
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    color: white;
+    transition: opacity 0.2s;
+}
+
+.btn-row button:hover {
+    opacity: 0.9;
+}
+
+.btn-success {
+    background: #27ae60;
+}
+
+.btn-success.active {
+    background: #1e8449;
+    box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.3);
+}
+
+.btn-danger {
+    background: #e74c3c;
+}
+
+.btn-danger.active {
+    background: #a93226;
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.3);
+}
+
+.btn-warning {
+    background: #f39c12;
+    color: white;
+    border: none;
+    padding: 14px 24px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-secondary {
+    background: #95a5a6;
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-secondary:hover {
+    background: #7f8c8d;
+}
+
+.btn-warning:hover {
+    background: #d68910;
+}
+
+.input-row {
+    display: flex;
+    gap: 10px;
+}
+
+.input-row input {
+    flex: 1;
+    padding: 14px;
+    border: 2px solid #e0e6ed;
+    border-radius: 10px;
+    font-size: 16px;
+}
+
+.input-row input:focus {
+    outline: none;
+    border-color: #4a90d9;
+}
+
+.input-row button {
+    padding: 14px 24px;
+    white-space: nowrap;
+}
+
+.card textarea {
+    width: 100%;
+    padding: 14px;
+    border: 2px solid #e0e6ed;
+    border-radius: 10px;
+    font-size: 16px;
+    min-height: 80px;
+    resize: vertical;
+    font-family: inherit;
+    margin-bottom: 10px;
+}
+
+.card textarea:focus {
+    outline: none;
+    border-color: #4a90d9;
+}
+
+.card textarea + button {
+    width: 100%;
+}
+
+.card pre {
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    background: #f8fafc;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.message {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 14px 24px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: none;
+    z-index: 1000;
+}
+
+.message.success {
+    background: #d4edda;
+    color: #155724;
+}
+
+.message.error {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+/* === АДАПТИВНОСТЬ === */
+
+@media (max-width: 480px) {
+    .container {
+        padding: 10px;
+    }
+
+    .header {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .header h1 {
+        font-size: 18px;
+    }
+
+    .date-nav span {
+        font-size: 16px;
+        min-width: 110px;
+    }
+
+    .btn-row {
+        flex-direction: column;
+    }
+
+    .input-row {
+        flex-direction: column;
+    }
+
+    .auth-card {
+        padding: 25px;
+    }
+}
+
+/* === ТЁМНАЯ ТЕМА (автоматически) === */
+
+@media (prefers-color-scheme: dark) {
+    body {
+        background: #0f0f15;
+        color: #e8e8f0;
+    }
+
+    .auth-card, .card, .date-nav {
+        background: #1c1c26;
+        color: #e8e8f0;
+    }
+
+    .auth-card h1, .card h2 {
+        color: #e8e8f0;
+    }
+
+    .card pre {
+        background: #252530;
+        color: #e8e8f0;
+    }
+
+    .auth-card input, .input-row input, .card textarea {
+        background: #252530;
+        color: #e8e8f0;
+        border-color: #3a3a48;
+    }
+
+    .subtitle {
+        color: #aaa;
+    }
+
+    .link-text {
+        color: #aaa;
+    }
+
+    .date-nav button {
+        background: #2a2a38;
+        color: #e8e8f0;
+    }
+
+    .date-nav button:hover {
+        background: #353545;
+    }
+}

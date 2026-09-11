@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация — Дневник зарплаты</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <h1>💰 Дневник зарплаты</h1>
+            <p class="subtitle">Создайте новый аккаунт</p>
+
+            {% if error %}
+            <div class="error">{{ error }}</div>
+            {% endif %}
+
+            <form method="POST">
+                <input type="text" name="username" placeholder="Логин" required autofocus>
+                <input type="password" name="password" placeholder="Пароль (минимум 4 символа)" required>
+                <button type="submit" class="btn-primary">Зарегистрироваться</button>
+            </form>
+
+            <p class="link-text">
+                Уже есть аккаунт? <a href="/login">Войти</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

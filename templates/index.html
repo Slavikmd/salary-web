@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Дневник зарплаты</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Заголовок -->
+        <header class="header">
+            <h1>Дневник зарплаты</h1>
+            <div class="header-right">
+                <span class="username">{{ username }}</span>
+                <a href="/logout" class="btn-logout">Выйти</a>
+            </div>
+        </header>
+
+        <!-- Дата -->
+        <div class="date-nav">
+            <button onclick="changeDay(-1)">◀</button>
+            <span id="dateDisplay">--.--.----</span>
+            <button onclick="changeDay(1)">▶</button>
+            <button class="btn-today" onclick="goToday()">Сегодня</button>
+        </div>
+
+        <!-- Статус работы -->
+        <div class="card">
+            <h2>Статус работы</h2>
+            <div class="btn-row">
+                <button class="btn-success" id="btnYes" onclick="setWork('yes')">Был на работе</button>
+                <button class="btn-danger" id="btnNo" onclick="setWork('no')">Не был</button>
+            </div>
+        </div>
+
+        <!-- Часы -->
+        <div class="card">
+            <h2>Часы работы</h2>
+            <div class="input-row">
+                <input type="number" id="hoursInput" step="0.5" min="0" max="24" placeholder="Часов">
+                <button class="btn-primary" onclick="saveHours()">Сохранить</button>
+            </div>
+        </div>
+
+        <!-- Зарплата -->
+        <div class="card">
+            <h2>Зарплата</h2>
+            <div class="input-row">
+                <input type="number" id="salaryInput" step="100" min="0" placeholder="Сумма (руб)">
+                <button class="btn-warning" onclick="saveSalary()">Отметить</button>
+            </div>
+        </div>
+
+        <!-- Комментарий -->
+        <div class="card">
+            <h2>Комментарий ко дню</h2>
+            <textarea id="commentInput" placeholder="Введите заметку..."></textarea>
+            <button class="btn-primary" onclick="saveComment()">Сохранить комментарий</button>
+        </div>
+
+        <!-- Статистика -->
+        <div class="card">
+            <h2>Статистика</h2>
+            <pre id="statsDisplay">Загрузка...</pre>
+        </div>
+
+        <!-- Выгрузка в Excel -->
+        <div class="card">
+            <h2>Выгрузка в Excel</h2>
+            <div class="btn-row">
+                <button class="btn-primary" onclick="exportMonth()">За месяц</button>
+                <button class="btn-primary" onclick="exportYear()">За год</button>
+            </div>
+        </div>
+    </div>
+
+        <!-- Управление -->
+        <div class="card">
+            <h2>Управление</h2>
+            <div class="btn-row">
+                <button class="btn-danger" onclick="resetDay()">Сброс дня</button>
+                <button class="btn-secondary" onclick="clearAll()">Очистить всё</button>
+            </div>
+        </div>
+   
+ <div id="message" class="message"></div>
+
+    <script>
+        let currentDate = new Date();
+        let currentYear = currentDate.getFullYear();
+        let currentMonth = currentDate.getMonth() + 1;
+
+        function formatDate(date) {
+            const d = String(date.getDate()).padStart(2, '0');
+            const m = String(date.getMonth() + 1).padStart(2, '0');
+            const y = date.getFullYear();
+            return `${y}-${m}-${d}`;
+        }
+
+        function formatDisplay(date) {
+            const d = String(date.getDate()).padStart(2, '0');
+            const m = String(date.getMonth() + 1).padStart(2, '0');
+            const y = date.getFullYear();
+            return `${d}.${m}.${y}`;
+        }
+
+        function showMessage(text, isError = false) {
+            const el = document.getElementById('message');
+            el.textContent = text;
+            el.className = 'message ' + (isError ? 'error' : 'success');
+            el.style.display = 'block';
+            setTimeout(() => { el.style.display = 'none'; }, 3000);
+        }
+
+        function loadDay() {
+            const dateStr = formatDate(currentDate);
+            document.getElementById('dateDisplay').textContent = formatDisplay(currentDate);
+            currentYear = currentDate.getFullYear();
+            currentMonth = currentDate.getMonth() + 1;
+
+            fetch(`/api/day/${dateStr}`)
+                .then(r => r.json())
+                .then(data => {
+                    document.getElementById('btnYes').classList.toggle('active', data.work === 'yes');
+                    document.getElementById('btnNo').classList.toggle('active', data.work === 'no');
+                    document.getElementById('hoursInput').value = data.hours || '';
+                    document.getElementById('salaryInput').value = data.salary || '';
+                    document.getElementById('commentInput').value = data.comment || '';
+                });
+
+            loadStats();
+        }
+
+        function loadStats() {
+            fetch(`/api/stats/${currentYear}/${currentMonth}`)
+                .then(r => r.json())
+                .then(data => {
+                    const text = `
+${currentDate.toLocaleString('ru', { month: 'long', year: 'numeric' })}
+==========================================
+
+Дней в месяце:    ${data.days_in_month}
+Отработано:       ${data.work_days} дн.
+Пропущено:        ${data.missed_days} дн.
+Всего часов:      ${data.total_hours.toFixed(1)}
+В среднем:        ${data.avg_hours.toFixed(1)} ч/день
+За месяц:         ${data.month_income.toFixed(0)} руб
+Всего:            ${data.total_income.toFixed(0)} руб
+Дней зарплаты:    ${data.salary_days}
+`;
+                    document.getElementById('statsDisplay').textContent = text;
+                });
+        }
+
+        function changeDay(delta) {
+            currentDate.setDate(currentDate.getDate() + delta);
+            loadDay();
+        }
+
+        function goToday() {
+            currentDate = new Date();
+            loadDay();
+        }
+
+        function setWork(status) {
+            const dateStr = formatDate(currentDate);
+            fetch('/api/save', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({date: dateStr, field: 'work', value: status})
+            }).then(r => r.json()).then(res => {
+                if (res.success) {
+                    showMessage(status === 'yes' ? '✅ Был на работе' : '❌ Не был');
+                    loadDay();
+                }
+            });
+        }
+
+        function saveHours() {
+            const hours = document.getElementById('hoursInput').value;
+            if (!hours) return showMessage('Введите часы', true);
+            const dateStr = formatDate(currentDate);
+            fetch('/api/save', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({date: dateStr, field: 'hours', value: parseFloat(hours)})
+            }).then(r => r.json()).then(res => {
+                if (res.success) {
+                    showMessage(`⏱️ Часы сохранены: ${hours}`);
+                    loadDay();
+                }
+            });
+        }
+
+        function saveSalary() {
+            const salary = document.getElementById('salaryInput').value;
+            if (!salary) return showMessage('Введите сумму', true);
+            const dateStr = formatDate(currentDate);
+            fetch('/api/save', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({date: dateStr, field: 'salary', value: parseFloat(salary)})
+            }).then(r => r.json()).then(res => {
+                if (res.success) {
+                    // Отмечаем как день зарплаты
+                    fetch('/api/save', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({date: dateStr, field: 'salary_day', value: 1})
+                    });
+                    showMessage(`💰 Зарплата ${salary} руб сохранена!`);
+                    loadDay();
+                }
+            });
+        }
+
+        function saveComment() {
+            const comment = document.getElementById('commentInput').value;
+            const dateStr = formatDate(currentDate);
+            fetch('/api/save', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({date: dateStr, field: 'comment', value: comment})
+            }).then(r => r.json()).then(res => {
+                if (res.success) {
+                    showMessage('📝 Комментарий сохранён');
+                }
+            });
+        }
+
+        function exportMonth() {
+            window.location.href = `/export/month/${currentYear}/${currentMonth}`;
+        }
+
+        function exportYear() {
+            window.location.href = `/export/year/${currentYear}`;
+        }
+
+        // Загружаем при старте
+        loadDay();
+        function resetDay() {
+            if (!confirm('Сбросить данные за этот день?')) return;
+            const dateStr = formatDate(currentDate);
+            fetch('/api/reset_day', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({date: dateStr})
+            }).then(r => r.json()).then(res => {
+                if (res.success) {
+                    showMessage('🗑️ Данные за день сброшены');
+                    loadDay();
+                }
+            });
+        }
+
+        function clearAll() {
+            if (!confirm('Удалить ВСЕ данные? Это действие нельзя отменить!')) return;
+            if (!confirm('Точно удалить всё?')) return;
+            fetch('/api/clear_all', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'}
+            }).then(r => r.json()).then(res => {
+                if (res.success) {
+                    showMessage('🗑️ Все данные удалены');
+                    loadDay();
+                }
+            });
+        }
+    </script>
+</body>
+</html>
